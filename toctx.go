@@ -1,18 +1,24 @@
 package cancel
 
-// CtxWrap represents an implementation of
-// a context.Context.
+import "context"
+
+//
+// Context wraps `canc` in an implementation of a `context.Context`.
 //
 // Usage:
 //
-//		db.QueryContext(cancel.CtxWrap{canc}, query, args)
+//		db.QueryContext(cancel.Context(canc), query, args)
 //
-type CtxWrap struct {
+func Context(canc Canceller) context.Context {
+	return ctxWrap{Canceller: canc}
+}
+
+type ctxWrap struct {
 	Canceller
 }
 
 // Value always returns nil, and is only used to
 // implement the context.Context interface.
-func (CtxWrap) Value(key interface{}) interface{} {
+func (ctxWrap) Value(key interface{}) interface{} {
 	return nil
 }
